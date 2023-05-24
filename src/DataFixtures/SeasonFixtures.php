@@ -6,59 +6,24 @@ use App\Entity\Season;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 {
-    public const SEASONS = [
-        [
-            'number' => '1',
-            'year' => '2022',
-            'description' => 'John Wick Fait boom boom',
-            'program' => 'John Wick'
-        ],
-        [
-            'number' => '2',
-            'year' => '2023',
-            'description' => 'John Wick Fait boom boom bim',
-            'program' => 'John Wick'
-        ],
-        [
-            'number' => '1',
-            'year' => '2021',
-            'description' => 'Paddington Fait boom boom bim',
-            'program' => 'Paddington',
-        ],
-        [
-            'number' => '1',
-            'year' => '2022',
-            'description' => 'Babar Fait boom boom bim',
-            'program' => 'Babar',
-        ],
-        [
-            'number' => '1',
-            'year' => '2024',
-            'description' => 'Cleopatra Fait boom boom bim',
-            'program' => 'Cleopatra',
-        ],
-        [
-            'number' => '1',
-            'year' => '2020',
-            'description' => 'Bambi Fait boom boom bim',
-            'program' => 'Bambi',
-        ],
-    ];
 
     public function load(ObjectManager $manager)
     {
-        foreach (self::SEASONS as $seasonInfo) {
+
+        $faker = Factory::create();
+
+        for($i = 0; $i < 10; $i++) {
             $season = new Season();
-            $season->setNumber($seasonInfo['number']);
-            $season->setYear($seasonInfo['year']);
-            $season->setDescription($seasonInfo['description']);
-            $program = $this->getReference('program_' . $seasonInfo['program']);
-            $season->setProgram($program);
+            $season->setNumber($faker->numberBetween(1, 10));
+            $season->setYear($faker->year());
+            $season->setDescription($faker->paragraphs(3, true));
+            $season->setProgram($this->getReference('program_' . $i));
             $manager->persist($season);
-            $this->addReference('season' . $seasonInfo['number'] . '_' . $seasonInfo['program'], $season);
+            $this->addReference('season_' . $i, $season);
         }
         $manager->flush();
     }

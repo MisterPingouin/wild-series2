@@ -6,55 +6,32 @@ use App\Entity\Program;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-    public const PROGRAMS = [
-        [
-            'title' => 'John Wick',
-            'synopsis' => 'Pan pan pan Bing Bing',
-            'category' => 'Action',
-        ],
-        [
-            'title' => 'Paddington',
-            'synopsis' => 'Un ours maléfique',
-            'category' => 'Aventure',
-        ],
-        [
-            'title' => 'Babar',
-            'synopsis' => 'Un éléphant ça trompe énormément',
-            'category' => 'Animation',
-        ],
-        [
-            'title' => 'Cleopatra',
-            'synopsis' => 'Un faux docu',
-            'category' => 'Fantastique',
-        ],
-        [
-            'title' => 'Bambi',
-            'synopsis' => 'Une biche tueuse',
-            'category' => 'Horreur',
-        ],
-    ];
 
     public function load(ObjectManager $manager)
     {
-        foreach (self::PROGRAMS as $programInfo) {
+        $faker = Factory::create();
+
+        for($i = 0; $i < 10; $i++) {
             $program = new Program();
-            $program->setTitle($programInfo['title']);
-            $program->setSynopsis($programInfo['synopsis']);
-            $category = $this->getReference('category_' . $programInfo['category']);
+            $program->setTitle($faker->word);
+            $program->setSynopsis($faker->paragraph);
+            $category = $this->getReference('category_' . $i);
             $program->setCategory($category);
             $manager->persist($program);
-            $this->addReference('program_' . $programInfo['title'], $program);
+            $this->addReference('program_' . $i, $program);
         }
+
         $manager->flush();
     }
+
     public function getDependencies()
     {
-        // Tu retournes ici toutes les classes de fixtures dont ProgramFixtures dépend
         return [
-        CategoryFixtures::class,
+            CategoryFixtures::class,
         ];
     }
 }
