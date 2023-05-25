@@ -9,6 +9,8 @@ use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\ProgramType;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -24,7 +26,25 @@ $programs = $programRepository->findAll();
         ]);
     }
 
- #[Route('/{id}', name: 'show')]
+    #[Route('/new', name: 'new')]
+    public function new(Request $request, ProgramRepository $programRepository) : Response
+    {
+        $program = new Program();
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted()) {
+            $programRepository->save($program, true);            
+
+            return $this->redirectToRoute('program_index');
+        }
+
+        return $this->render('program/new.html.twig', [
+            'form' => $form,
+        ]);
+    }
+    
+#[Route('/{id}', name: 'show')]
 public function show(Program $program): Response
 {
   return $this->render('program/show.html.twig', ['program'=>$program]);
