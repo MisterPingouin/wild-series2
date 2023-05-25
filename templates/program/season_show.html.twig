@@ -9,7 +9,11 @@
     <h2>Épisodes :</h2>
     <ul>
         {% for episode in season.episodes %}
-            <li>{{ episode.title }} ({{ episode.number }})</li>
+            <li>
+            <a href="{{ path('program_episode_show', { program : program.id , season : season.id , episode : episode.id }) }}">
+            {{ episode.title }} ({{ episode.number }})
+            </a>
+            </li>
         {% endfor %}
     </ul>
 

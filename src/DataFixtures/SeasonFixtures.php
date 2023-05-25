@@ -10,23 +10,24 @@ use Faker\Factory;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager)
     {
-
         $faker = Factory::create();
-
+    
         for($i = 0; $i < 10; $i++) {
-            $season = new Season();
-            $season->setNumber($faker->numberBetween(1, 10));
-            $season->setYear($faker->year());
-            $season->setDescription($faker->paragraphs(3, true));
-            $season->setProgram($this->getReference('program_' . $i));
-            $manager->persist($season);
-            $this->addReference('season_' . $i, $season);
+            for ($j = 0; $j < 4; $j++) {
+                $season = new Season();
+                $season->setNumber($j + 1);
+                $season->setYear($faker->year());
+                $season->setDescription($faker->paragraphs(3, true));
+                $season->setProgram($this->getReference('program_' . $i));
+                $manager->persist($season);
+                $this->addReference('season_' . $i . '_' . $j, $season); 
+            }
         }
         $manager->flush();
     }
+       
     public function getDependencies()
     {
 
